@@ -15,9 +15,12 @@ def to_normalize_phones(apps, schema_editor):
                     phone,
                     phonenumbers.PhoneNumberFormat.E164
                 )
-                flat.save(update_fields=['owner_pure_phone'])
+            else:
+                flat.owner_pure_phone = None
+            flat.save(update_fields=['owner_pure_phone'])
         except phonenumbers.NumberParseException:
-            print(f'Не удалось распарсить: {raw_phone}')
+            flat.owner_pure_phone = None
+            flat.save(update_fields=['owner_pure_phone'])
             continue
 
 
