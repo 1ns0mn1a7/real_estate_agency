@@ -98,3 +98,8 @@ class Owner(models.Model):
 
     def __str__(self):
         return self.name
+
+
+    class Meta:
+        verbose_name = 'Собственник'
+        verbose_name_plural = 'Собственники'
