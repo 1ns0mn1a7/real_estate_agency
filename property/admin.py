@@ -8,6 +8,7 @@ class OwnerInline(admin.TabularInline):
     raw_id_fields = ['owner', 'flat']
 
 
+@admin.register(Flat)
 class FlatAdmin(admin.ModelAdmin):
     search_fields = ['town', 'address', 'owner']
     readonly_fields = ['created_at']
@@ -17,24 +18,30 @@ class FlatAdmin(admin.ModelAdmin):
         'new_building',
         'construction_year',
         'town',
-        'owners_phonenumber',
-        'owner_pure_phone'
+        'get_owners_info'
     ]
     list_editable = ['new_building']
     list_filter = ['new_building', 'rooms_number', 'has_balcony']
     raw_id_fields = ['liked_by']
     inlines = [OwnerInline]
 
+    def get_owners_info(self, obj):
+        owners = obj.owners.all()
+        owner_strings = [
+            f'{owner.name} ({owner.pure_phone})'
+            for owner in owners
+        ]
+        return ', '.join(owner_strings)
 
+    get_owners_info.short_description = 'Владельцы'
+
+
+@admin.register(Complaint)
 class ComplaintAdmin(admin.ModelAdmin):
     raw_id_fields = ["user", "flat"]
 
 
+@admin.register(Owner)
 class OwnerAdmin(admin.ModelAdmin):
     raw_id_fields = ['flats']
-    list_display = ['name', 'phonenumber', 'pure_phone']
-
-
-admin.site.register(Flat, FlatAdmin)
-admin.site.register(Complaint, ComplaintAdmin)
-admin.site.register(Owner, OwnerAdmin)
+    list_display = ['name', 'pure_phone']
